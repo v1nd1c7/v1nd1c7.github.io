@@ -1,201 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Press+Start+2P&display=swap">
-    <title>Nikola's Portfolio</title>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0a0f0f, #1c1f26);
-            color: #e0e0e0;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: linear-gradient(135deg, #101214, #1e2b38);
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        header h1 {
-            margin: 0;
-            font-family: 'Press Start 2P', cursive;
-            font-weight: 700;
-            color: #00ff00;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-        }
-        nav ul li {
-            margin: 0 15px;
-        }
-        nav ul li a {
-            text-decoration: none;
-            color: #00ff00;
-            font-weight: 400;
-            transition: color 0.3s ease;
-        }
-        nav ul li a:hover {
-            color: #33ff99;
-        }
-        main {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 0 20px;
-        }
-        section {
-            background: linear-gradient(135deg, #101214, #1e2b38);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
-        }
-        h2 {
-            font-family: 'Press Start 2P', cursive;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #00ff00;
-        }
-        footer {
-            text-align: center;
-            padding: 30px;
-            background: #1e2b38;
-            color: #e0e0e0;
-            margin-top: 50px;
-        }
-        a.button {
-            display: inline-block;
-            margin: 20px 0;
-            padding: 12px 25px;
-            background: #00ff00;
-            color: #101214;
-            text-decoration: none;
-            font-weight: 700;
-            border-radius: 30px;
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-        a.button:hover {
-            background: #33ff99;
-            transform: scale(1.05);
-        }
-        .ascii-art {
-            text-align: center;
-            font-family: 'Courier New', Courier, monospace;
-            color: #00ff00;
-            margin-bottom: 40px;
-        }
-        ul li {
-            margin-bottom: 10px;
-        }
-    </style>
-
-    <style>
-        .floating-statistics {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 300px;
-            height: 100px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            z-index: 1000;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>v1nd1c7 Terminal Portfolio</title>
+  <style>
+    html, body { 
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      background: #000; 
+      color: #0f0; 
+      font-family: 'Courier New', Courier, monospace;
+      overflow: hidden;
+    }
+    #terminal { 
+      box-sizing: border-box;
+      padding: 20px;
+      height: calc(100% - 60px);
+      overflow-y: auto;
+      white-space: pre-wrap;
+      position: relative;
+      text-shadow: 0 0 5px #0f03;
+    }
+    .input-line { 
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #000;
+      padding: 10px 20px;
+      border-top: 1px solid #0f03;
+      box-shadow: 0 0 20px #0f03;
+    }
+    .prompt { 
+      margin-right: 10px;
+      text-shadow: 0 0 5px #0f0;
+    }
+    .cmdline { 
+      background: none;
+      border: none;
+      outline: none;
+      color: inherit;
+      flex: 1;
+      font-family: inherit;
+      font-size: inherit;
+      text-shadow: 0 0 5px #0f0;
+    }
+    .caret { 
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: #0f0;
+      animation: blink 1s step-end infinite;
+      margin-left: 5px;
+      box-shadow: 0 0 5px #0f0;
+    }
+    @keyframes blink { 
+      from, to { background: transparent; } 
+      50% { background: #0f0; } 
+    }
+    #terminal::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(0deg, rgba(0,255,0,0.1) 0%, transparent 5%);
+      background-size: 100% 5px;
+      animation: scanline 6s linear infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+    @keyframes scanline {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(100%); }
+    }
+  </style>
+</head>
 <body>
-    <header>
-        <h1>// v1nd1c7</h1>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#hobbies">Hobbies</a></li>
-                <li><a href="#certifications">Certifications</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
+  <div id="terminal"></div>
+  <script>
+    const terminal = document.getElementById('terminal');
+    const promptText = 'v1nd1c7@portfolio:~$';
+    
+    // Hakerski efekti zvuka
+    const typeSound = new Audio('data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=');
+    
+    const data = {
+      help: `\nDostupne komande:\n about - O meni\n skills - Veštine\n hobbies - Hobiji\n certifications - Certifikati\n contact - Kontakt\n clear - Očisti terminal\n history - Istorija komandi\n theme - Promeni temu\n banner - Prikaži banner`,
+      about: `\nO meni:\nJa sam Nikola, specijalista za kibernetičku bezbednost i etički haker...`,
+      skills: `\nVeštine:\n- Offensive Security & Ethical Hacking\n- Red Teaming & Blue Teaming...`,
+      hobbies: `\nHobiji:\n- Psihologija\n- Filozofija...`,
+      certifications: `\nCertifikati:\n- CompTIA Security+ (u toku)\n- Google Cybersecurity Professional Certificate...`,
+      contact: `\nKontakt:\nTryHackMe: https://tryhackme.com/p/v1nd1c7\nLinkedIn: https://www.linkedin.com/in/v1nd1c7...`
+    };
+
+    let commandHistory = [];
+    let historyIndex = -1;
+
+    // Terminal efekti
+    function terminalGlow() {
+      terminal.style.textShadow = `0 0 ${5 + Math.random()*10}px #0f0`;
+      setTimeout(terminalGlow, 100 + Math.random()*200);
+    }
+
+    function matrixEffect() {
+      if(Math.random() > 0.97) {
+        const chars = '01';
+        const char = chars[Math.floor(Math.random()*chars.length)];
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.position = 'absolute';
+        span.style.left = `${Math.random()*100}%`;
+        span.style.top = `${Math.random()*100}%`;
+        span.style.opacity = '0.3';
+        terminal.appendChild(span);
+        setTimeout(() => span.remove(), 1000);
+      }
+      setTimeout(matrixEffect, 50);
+    }
+
+    // Inicijalizacija efekata
+    terminalGlow();
+    matrixEffect();
+
+    function appendLine(text = '') {
+      const line = document.createElement('div');
+      line.innerHTML = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      terminal.insertBefore(line, terminal.lastElementChild);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function newPrompt() {
+      const line = document.createElement('div');
+      line.classList.add('input-line');
+      
+      const promptSpan = document.createElement('span');
+      promptSpan.classList.add('prompt');
+      promptSpan.textContent = promptText;
+      
+      const input = document.createElement('input');
+      input.classList.add('cmdline');
+      input.autofocus = true;
+      
+      const caret = document.createElement('span');
+      caret.classList.add('caret');
+      
+      line.append(promptSpan, input, caret);
+      terminal.appendChild(line);
+      input.focus();
+      
+      input.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowUp') {
+          e.preventDefault();
+          if(historyIndex < commandHistory.length-1) {
+            historyIndex++;
+            input.value = commandHistory[commandHistory.length-1 - historyIndex];
+          }
+        }
+        if(e.key === 'ArrowDown') {
+          e.preventDefault();
+          if(historyIndex > 0) {
+            historyIndex--;
+            input.value = commandHistory[commandHistory.length-1 - historyIndex];
+          }
+        }
+      });
+      
+      input.addEventListener('keypress', (e) => {
+        typeSound.play().catch(() => {});
+      });
+      
+      input.addEventListener('keydown', handleInput);
+    }
+
+    function handleInput(e) {
+      if (e.key === 'Enter') {
+        const input = e.target;
+        const cmd = input.value.trim().toLowerCase();
+        input.disabled = true;
         
-        <section id="about">
-            <h2>About Me</h2>
-            <p>I'm Nikola, a cybersecurity specialist and an ethical hacker. Relentless passion for tech, living for challenges, and never being content with mediocrity are the things that drive me to master whatever is in my sight. Curiosity and the urge to understand how everything works are driving forces in my life. My playgrounds are offensive security, scripting, and automation. My journey into hacking began with simple curiosity, which then quickly transformed into a passion that has defined my modern-day self. I have hands-on experience in both Red Teaming and Blue Teaming, meaning I have experience in the detection of vulnerabilities and defending against them. My toolkit is varied, including tools within Kali Linux, Flipper Zero, and portable setups like Kali NetHunter.</p>
-            <p>I've even taken on the programming of industrial robots. If it can be hacked, I'm there.</p>
-            <p>Hacking is just part of the whole. My mindset is that of a polymath, where I not only continue to build software but also leverage my expertise in HTML, CSS, JavaScript, PHP, MySQL, Python, and Bash, especially for scripting purposes, and reverse engineering alongside the intricacies of human behavior, such as microexpressions. To know how people think helps me be an excellent social engineer; it is all part of leveling up who I am in general, both as a professional and a person.</p>
-            <p>When I’m not in front of my screen, you can find me at cyber events, local or international, sharing my knowledge, gaining new skills, and connecting with the community. I'm also working on founding the first hackerspace in Kragujevac—a community-driven environment for tech enthusiasts.</p>
-            <p>I’m always hungry to learn more—whether it's tackling Bug Bounties, hunting zero-days, or creating compact and portable hacking tools. My goal is to keep leveling up my skills so I can be the person standing between malicious actors and their targets, making the digital world a little safer, one vulnerability at a time. My handle, "v1nd1c7," might sound intimidating, but at its core, it’s about respect. Ultimately, I’m all about community, innovation, and using my skills for good. Welcome to my journey—an endless pursuit of knowledge, passion, and relentless growth.</p>
-        </section>
-        <section id="skills">
-            <h2>Skills</h2>
-            <ul>
-                <li>Offensive Security & Ethical Hacking</li>
-                <li>Red Teaming & Blue Teaming</li>
-                <li>Web Development (HTML, CSS, JavaScript, PHP, MySQL)</li>
-                <li>Automation & Scripting (Bash, Python)</li>
-                <li>Social Engineering & Microexpression Analysis</li>
-                <li>Portable Hacking Tools: Kali NetHunter, Flipper Zero, HackRF One</li>
-                <li>Linux Mastery</li>
-                <li>Windows Competency</li>
-                <li>OWASP Top 10</li>
-                <li>Hash Cracking</li>
-                <li>Metasploit</li>
-                <li>Linux Privilege Escalation</li>
-                <li>Windows Privilege Escalation</li>
-                <li>Pentesting</li>
-                <li>Web Hacking</li>
-                <li>Burp Suite</li>
-                <li>Open Source Intelligence (OSINT)</li>
-                <li>Managing Security Risks</li>
-                <li>Networks and Network Security</li>
-                <li>Malware Analysis Tools (YARA)</li>
-                <li>Detection and Response</li>
-                <li>Programming Industrial Robots</li>
-                <li>Reverse Engineering</li>
-                <li>Security Engineering</li>
-            </ul>
-        </section>
-        <section id="Contact me">
-            <h2>Contact me</h2>
-            <div>
-                <a href="https://tryhackme.com/r/p/v1nd1c7" class="button">TryHackMe Profile</a>
-                <a href="https://www.linkedin.com/in/npcybersec/" class="button">LinkedIn Profile</a>
-                <a href="https://github.com/v1nd1c7/" class="button">Github</a>
-                <a href="https://x.com/peric991/" class="button">Twitter</a>
-            </div>
-        </section>
-        <section id="hobbies">
-            <h2>Hobbies</h2>
-            <ul>
-                <li>Psychology</li>
-                <li>Philosophy</li>
-                <li>Quantum mechanics</li>
-                <li>Exploring embedded systems</li>
-                <li>Ham Radio</li>
-                <li>Longboarding</li>
-                <li>Anime and Manga</li>
-                <li>Attending Cybersecurity Events</li>
-                <li>Lockpicking</li>
-            </ul>
-        </section>
-        <section id="certifications">
-            <h2>Certifications</h2>
-            <ul>
-                <li>CompTia Security + (in progress)</li>
-                <li>Google Cybersecurity Professional Certificate</li>
-                <li>Python for Cybersecurity - Cybrary</li>
-                <li>TryHackMe - Multiple Learning Paths</li>
-            </ul>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 v1nd1c7. All rights reserved.</p>
-    </footer>
+        commandHistory.push(cmd);
+        historyIndex = -1;
+        
+        const caret = input.nextSibling;
+        if (caret) caret.remove();
+        
+        if (cmd === 'clear') {
+          terminal.innerHTML = '';
+          showBanner();
+          appendLine("Dobrodošli u v1nd1c7 Terminal Portfolio. Ukucajte 'help' za listu komandi.");
+          newPrompt();
+          return;
+        }
+         }
+
+    function showBanner() {
+      const banner = `  
+                     #                                    
+               ##                                   
+ ###  ## ####  ###  ## ####### ####  ###### ####### 
+ ###  ##   ##  #### ##       ##  ## ###          ## 
+ ###  ##   ##  #######  ###  ##  ## ###          ## 
+  #####    ##  ### ###  ###  ##  ## ###          ## 
+   ###    #### ###  ##  ######  #### ######      ## 
+                     #                           ## 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+      `;
+      appendPre(banner);
+    }
+
+    // initialize
+    showBanner();
+    appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'help' to see available commands.");
+    newPrompt();
+  </script>
+</body>
 </html>
+       
