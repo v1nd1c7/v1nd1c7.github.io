@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>v1nd1c7 Terminal Portfolio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>v1nd1c7 Terminal Website & Portfolio</title>
   <style>
     html, body { margin: 0; padding: 0; height: 100%; background: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; }
     #terminal { box-sizing: border-box; padding: 10px; height: 100%; overflow-y: auto; white-space: pre-wrap; }
     .input-line { display: flex; align-items: center; }
     .prompt { margin-right: 5px; }
     .cmdline { background: none; border: none; outline: none; color: inherit; flex: 1; font-family: inherit; font-size: inherit; }
-    .caret { display: inline-block; width: 8px; height: 1em; background: #0f0; animation: blink 1s step-end infinite; margin-left: 2px; }
-    @keyframes blink { from, to { background: transparent; } 50% { background: #0f0; } }
+    a { color: #0f0; text-decoration: underline; }
+    #banner { text-align: center; }
   </style>
 </head>
 <body>
@@ -20,24 +20,35 @@
     const terminal = document.getElementById('terminal');
     const promptText = 'v1nd1c7@portfolio:~$';
     const data = {
-      help: `Available commands:\n about - About Me\n skills - Skills\n hobbies - Hobbies\n certifications - Certifications\n contact - Contact Info\n clear - Clear terminal`,
-      about: `About Me:\nI'm Nikola, a cybersecurity specialist and an ethical hacker...`,
-      skills: `Skills:\n- Offensive Security & Ethical Hacking\n- Red Teaming & Blue Teaming...`,
-      hobbies: `Hobbies:\n- Psychology\n- Philosophy...`,
-      certifications: `Certifications:\n- CompTIA Security+ (in progress)\n- Google Cybersecurity Professional Certificate...`,
-      contact: `Contact Info:\nTryHackMe: https://tryhackme.com/p/v1nd1c7\nLinkedIn: https://www.linkedin.com/in/v1nd1c7...`
+      ls: `Available commands:\n whoami - About Me\n skills - Skills\n hobbies - Hobbies\n certifications - Certifications\n contact - Contact Info\n projects - Projects\n clear - Clear terminal`,
+      whoami: `
+
+Nikola Perić v1nd1c7
+Based in Kragujevac, Serbia
+Cybersecurity Specialist, Red Teamer & Ethical Hacker
+Industrial Robotics Programmer, Embedded Systems Enthusiast & Pen Tester
+Radio Amateur & Lockpicking Hobbyist
+Anime/Music Aficionado (hardtechno, djent, acid, jazz, blues)
+Polymath: hardware, software, wetware, psychology, philosophy, chess, Go game, longboarding, soldering, welding  `,
+      skills: `Skills:\n- Offensive Security & Ethical Hacking\n- Red Teaming\n- Blue Teaming(begginer level)\n- Robotics Programming:\n- Panasonic (DTPS)\n- Fanuc (RoboGuide)\n- Linux (various distors), Bash, Python scripting\n- Networking, Penetration Testing\n- Lockpicking & Embedded Hardware Exploits`,
+      hobbies: `Hobbies:\n- Lockpicking & Security Research\n- Anime & Manga (Ghost in the Shell, Serial Experiments Lain, etc.)\n- Music (blues, techno, acid, jazz, )\n- Robotics & Flipper Zero tinkering, HackRF One, NFC & RFID security`,
+      certs: `Certifications:\n- Google Cybersecurity Professional Certificate\n- CompTIA Security+(in progress)\n- Various TryHackMe certs`,
+      projects:`Projects:\n -Building the first Hackerspace in Kragujevac\n- Hosting a Hackerspace at this Years BalcCon (Balkan Computer Congress) about lock picking, NFC, RF and RFID security with workshops and tournaments`,  
+      contact: `Contact Info:\n- TryHackMe: https://tryhackme.com/p/v1nd1c7\n- LinkedIn: https://www.linkedin.com/in/npcybersec\n- X (Twitter): https://x.com/_kvantni_\n- Mail: pericn12@protonmail.com`,
+    
     };
 
     function appendLine(text = '') {
       const line = document.createElement('div');
-      line.textContent = text;
+      line.innerHTML = text;
       terminal.appendChild(line);
       terminal.scrollTop = terminal.scrollHeight;
     }
 
     function appendPre(text) {
       const pre = document.createElement('pre');
-      pre.textContent = text;
+      pre.innerHTML = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>')
+                          .replace(/(www\.[^\s]+)/g, '<a href="https://$1" target="_blank">$1</a>');
       terminal.appendChild(pre);
       terminal.scrollTop = terminal.scrollHeight;
     }
@@ -51,9 +62,7 @@
       const input = document.createElement('input');
       input.classList.add('cmdline');
       input.autofocus = true;
-      const caret = document.createElement('span');
-      caret.classList.add('caret');
-      line.append(promptSpan, input, caret);
+      line.append(promptSpan, input);
       terminal.appendChild(line);
       input.focus();
       input.addEventListener('keydown', handleInput);
@@ -64,44 +73,45 @@
         const input = e.target;
         const cmd = input.value.trim().toLowerCase();
         input.disabled = true;
-        const caret = input.nextSibling;
-        if (caret) caret.remove();
         if (cmd === 'clear') {
           terminal.innerHTML = '';
           showBanner();
-          appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'help' to see available commands.");
+          appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'ls' to see available commands.");
           newPrompt();
           return;
         }
         if (data.hasOwnProperty(cmd)) {
-          appendLine(data[cmd]);
+          appendPre(data[cmd]);
         } else {
-          appendLine(`Command not found: ${cmd}. Type 'help' for list of commands.`);
+          appendLine(`Command not found: ${cmd}. Type 'ls' for list of commands.`);
         }
         newPrompt();
       }
     }
 
     function showBanner() {
-      const banner = `  
-                     #                                    
-               ##                                   
- ###  ## ####  ###  ## ####### ####  ###### ####### 
- ###  ##   ##  #### ##       ##  ## ###          ## 
- ###  ##   ##  #######  ###  ##  ## ###          ## 
-  #####    ##  ### ###  ###  ##  ## ###          ## 
-   ###    #### ###  ##  ######  #### ######      ## 
-                     #                           ## 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-      `;
+      const banner = `
+        d888               888 d888          8888888888 
+       d8888               888d8888                d88P 
+         888               888  888               d88P  
+888  888 888  88888b.  .d88888  888   .d8888b    d88P   
+888  888 888  888 "88bd88" 888  888  d88P"    88888888  
+Y88  88P 888  888  888888  888  888  888       d88P     
+ Y8bd8P  888  888  888Y88b 888  888  Y88b.    d88P      
+  Y88P 8888888888  888 "Y888888888888 "Y8888Pd88P       
+                                                        
+                                                        
+                                                        
+
+`;
       appendPre(banner);
     }
 
-    // initialize
     showBanner();
-    appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'help' to see available commands.");
+    appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'ls' to see available commands.");
     newPrompt();
   </script>
 </body>
 </html>
+
 
