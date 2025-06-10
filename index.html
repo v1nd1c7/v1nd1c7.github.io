@@ -1,20 +1,54 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>v1nd1c7 Terminal Website & Portfolio</title>
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; background: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; }
-    #terminal { box-sizing: border-box; padding: 10px; height: 100%; overflow-y: auto; white-space: pre-wrap; }
-    .input-line { display: flex; align-items: center; }
-    .prompt { margin-right: 5px; }
-    .cmdline { background: none; border: none; outline: none; color: inherit; flex: 1; font-family: inherit; font-size: inherit; }
-    a { color: #0f0; text-decoration: underline; }
-    #banner { text-align: center; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+    }
+    #terminal {
+      box-sizing: border-box;
+      padding: 10px;
+      height: 100%;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .input-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .prompt {
+      margin-right: 5px;
+    }
+    .cmdline {
+      background: none;
+      border: none;
+      outline: none;
+      color: inherit;
+      flex: 1;
+      font-family: inherit;
+      font-size: inherit;
+      width: 100%;
+    }
+    a {
+      color: #0f0;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+    pre.banner {
+      text-align: center;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -22,23 +56,16 @@
   <script>
     const terminal = document.getElementById('terminal');
     const promptText = 'v1nd1c7@portfolio:~$';
-    const data = {
-      ls: `Available commands:\n whoami - About Me\n skills - Skills\n hobbies - Hobbies\n certs - Certifications\n contact - Contact Info\n projects - Projects\n clear - Clear terminal`,
-      whoami: `
 
-Nikola Perić v1nd1c7
-Based in Kragujevac, Serbia
-Cybersecurity Specialist, Red Teamer & Ethical Hacker
-Industrial Robotics Programmer, Embedded Systems Enthusiast & Pen Tester
-Radio Amateur & Lockpicking Hobbyist
-Anime/Music Aficionado (hardtechno, djent, acid, jazz, blues)
-Polymath: hardware, software, wetware, psychology, philosophy, chess, Go game, longboarding, soldering, welding  `,
-      skills: `Skills:\n- Offensive Security & Ethical Hacking\n- Red Teaming\n- Blue Teaming(begginer level)\n- Robotics Programming:\n- Panasonic (DTPS)\n- Fanuc (RoboGuide)\n- Linux (various distors), Bash, Python scripting\n- Networking, Penetration Testing\n- Lockpicking & Embedded Hardware Exploits`,
-      hobbies: `Hobbies:\n- Lockpicking & Security Research\n- Anime & Manga (Ghost in the Shell, Serial Experiments Lain, etc.)\n- Music (blues, techno, acid, jazz, )\n- Robotics & Flipper Zero tinkering, HackRF One, NFC & RFID security`,
-      certs: `Certifications:\n- Google Cybersecurity Professional Certificate\n- CompTIA Security+(in progress)\n- Various TryHackMe certs`,
-      projects:`Projects:\n -Building the first Hackerspace in Kragujevac\n- Hosting a Hackerspace at this Years BalcCon (Balkan Computer Congress) about lock picking, NFC, RF and RFID security with workshops and tournaments`,  
-      contact: `Contact Info:\n- TryHackMe: https://tryhackme.com/p/v1nd1c7\n- LinkedIn: https://www.linkedin.com/in/npcybersec\n- X (Twitter): https://x.com/_kvantni_\n- Mail: pericn12@protonmail.com`,
-    
+    const data = {
+      ls: `Available commands:\n whoami - About Me\n skills - Skills\n hobbies - Hobbies\n certs - Certifications\n contact - Contact Info\n projects - Projects\n future - Future Timeline\n clear - Clear terminal`,
+      whoami: `Nikola Perić v1nd1c7\nBased in Kragujevac, Serbia\nCybersecurity Specialist, Red Teamer & Ethical Hacker\nIndustrial Robotics Programmer, Embedded Systems Enthusiast & Pen Tester\nRadio Amateur & Lockpicking Hobbyist\nAnime/Music Aficionado (hardtechno, djent, acid, jazz, blues)\nPolymath: hardware, software, wetware, psychology, philosophy, chess, Go game, longboarding, soldering, welding`,
+      skills: `Skills:\n- Offensive Security & Ethical Hacking\n- Red Teaming\n- Blue Teaming(begginer level)\n- Robotics Programming:\n- Panasonic (DTPS)\n- Fanuc (RoboGuide)\n- Linux (various distros), Bash, Python scripting\n- Networking, Penetration Testing\n- Lockpicking & Embedded Hardware Exploits`,
+      hobbies: `Hobbies:\n- Lockpicking & Security Research\n- Anime & Manga (Ghost in the Shell, Serial Experiments Lain, etc.)\n- Music (blues, techno, acid, jazz)\n- Robotics & Flipper Zero tinkering, HackRF One, NFC & RFID security`,
+      certs: `Certifications:\n- Google Cybersecurity Professional Certificate\n- CompTIA Security+ (in progress)\n- Various TryHackMe certs`,
+      projects:`Projects:\n- Building the first Hackerspace in Kragujevac\n- Hosting a Hackerspace at this year's BalcCon (Balkan Computer Congress) about lock picking, NFC, RF and RFID security with workshops and tournaments`,
+      future: `Future Timeline:\n- Obtain CompTIA Security+ certification\n- Submit a valid Bug Bounty report\n- Complete a Red Teaming certification\n- Lead a Lockpicking Hackerspace at BalcCon 2k25\n- Present on RF, RFID, and NFC security at BalcCon 2k26`,
+      contact: `Contact Info:\n- TryHackMe: https://tryhackme.com/p/v1nd1c7\n- LinkedIn: https://www.linkedin.com/in/npcybersec\n- X (Twitter): https://x.com/_kvantni_\n- Mail: pericn12@protonmail.com`
     };
 
     function appendLine(text = '') {
@@ -48,10 +75,12 @@ Polymath: hardware, software, wetware, psychology, philosophy, chess, Go game, l
       terminal.scrollTop = terminal.scrollHeight;
     }
 
-    function appendPre(text) {
+    function appendPre(text, isBanner = false) {
       const pre = document.createElement('pre');
-      pre.innerHTML = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>')
-                          .replace(/(www\.[^\s]+)/g, '<a href="https://$1" target="_blank">$1</a>');
+      pre.className = isBanner ? 'banner' : '';
+      pre.innerHTML = text.replace(/(https?:\/\/[^\s]+)/g, (match) => {
+        return `<a href="${match}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+      });
       terminal.appendChild(pre);
       terminal.scrollTop = terminal.scrollHeight;
     }
@@ -68,46 +97,42 @@ Polymath: hardware, software, wetware, psychology, philosophy, chess, Go game, l
       line.append(promptSpan, input);
       terminal.appendChild(line);
       input.focus();
-      input.addEventListener('keydown', handleInput);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleInput(e);
+      });
     }
 
     function handleInput(e) {
-      if (e.key === 'Enter') {
-        const input = e.target;
-        const cmd = input.value.trim().toLowerCase();
-        input.disabled = true;
-        if (cmd === 'clear') {
-          terminal.innerHTML = '';
-          showBanner();
-          appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'ls' to see available commands.");
-          newPrompt();
-          return;
-        }
-        if (data.hasOwnProperty(cmd)) {
-          appendPre(data[cmd]);
-        } else {
-          appendLine(`Command not found: ${cmd}. Type 'ls' for list of commands.`);
-        }
+      const input = e.target;
+      const cmd = input.value.trim().toLowerCase();
+      input.disabled = true;
+      if (cmd === 'clear') {
+        terminal.innerHTML = '';
+        showBanner();
+        appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'ls' to see available commands.");
         newPrompt();
+        return;
       }
+      if (data.hasOwnProperty(cmd)) {
+        appendPre(data[cmd]);
+      } else {
+        appendLine(`Command not found: ${cmd}. Type 'ls' for list of commands.`);
+      }
+      newPrompt();
     }
 
     function showBanner() {
       const banner = `
-        d888               888 d888          8888888888 
-       d8888               888d8888                d88P 
-         888               888  888               d88P  
-888  888 888  88888b.  .d88888  888   .d8888b    d88P   
-888  888 888  888 "88bd88" 888  888  d88P"    88888888  
-Y88  88P 888  888  888888  888  888  888       d88P     
- Y8bd8P  888  888  888Y88b 888  888  Y88b.    d88P      
-  Y88P 8888888888  888 "Y888888888888 "Y8888Pd88P       
-                                                        
-                                                        
-                                                        
-
+        d888               888 d888          8888888888 
+       d8888               888d8888                 d88P 
+         888               888  888               d88P  
+888  888 888  88888b.  .d88888  888   .d8888b    d88P   
+888  888 888  888 "88bd88" 888  888  d88P"    88888888  
+Y88  88P 888  888  888888  888  888  888       d88P     
+ Y8bd8P  888  888  888Y88b 888  888  Y88b.    d88P      
+  Y88P 8888888888  888 "Y888888888888 "Y8888Pd88P       
 `;
-      appendPre(banner);
+      appendPre(banner, true);
     }
 
     showBanner();
