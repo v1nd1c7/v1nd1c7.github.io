@@ -5,6 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>v1nd1c7 Terminal Website & Portfolio</title>
   <style>
+    @keyframes flicker {
+      0% { opacity: 0.97; }
+      5% { opacity: 0.95; }
+      10% { opacity: 0.98; }
+      15% { opacity: 0.94; }
+      20% { opacity: 0.97; }
+      100% { opacity: 0.97; }
+    }
+
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes textGlow {
+      0%, 100% { text-shadow: 0 0 10px #0f0, 0 0 20px #0f0; }
+      50% { text-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 60px #0f0; }
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    @keyframes matrix {
+      0% { top: -100%; }
+      100% { top: 100%; }
+    }
+
     html, body {
       margin: 0;
       padding: 0;
@@ -13,23 +51,95 @@
       color: #0f0;
       font-family: 'Courier New', Courier, monospace;
       font-size: 16px;
+      overflow: hidden;
     }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 2;
+      pointer-events: none;
+      animation: flicker 0.15s infinite;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(0, 255, 0, 0.1);
+      z-index: 2;
+      pointer-events: none;
+      animation: scanline 8s linear infinite;
+    }
+
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      opacity: 0.03;
+    }
+
+    .matrix-char {
+      position: absolute;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      animation: matrix 10s linear infinite;
+    }
+
     #terminal {
+      position: relative;
+      z-index: 1;
       box-sizing: border-box;
-      padding: 10px;
+      padding: 20px;
       height: 100%;
       overflow-y: auto;
       white-space: pre-wrap;
       word-break: break-word;
+      background: rgba(0, 0, 0, 0.8);
+      text-shadow: 0 0 5px #0f0;
     }
+
+    #terminal::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    #terminal::-webkit-scrollbar-track {
+      background: #000;
+    }
+
+    #terminal::-webkit-scrollbar-thumb {
+      background: #0f0;
+      box-shadow: 0 0 10px #0f0;
+    }
+
     .input-line {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
     }
+
     .prompt {
       margin-right: 5px;
+      animation: textGlow 2s ease-in-out infinite;
     }
+
     .cmdline {
       background: none;
       border: none;
@@ -39,39 +149,327 @@
       font-family: inherit;
       font-size: inherit;
       width: 100%;
+      caret-color: #0f0;
     }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: #0f0;
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+
     a {
       color: #0f0;
       text-decoration: underline;
       word-break: break-all;
+      transition: all 0.3s;
     }
+
+    a:hover {
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+    }
+
     pre.banner {
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
+      animation: glitch 5s infinite;
+      text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+      line-height: 1.2;
+    }
+
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      animation: typing 2s steps(40, end);
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    .output-line {
+      margin: 5px 0;
+      line-height: 1.6;
+    }
+
+    .glow-text {
+      animation: textGlow 3s ease-in-out infinite;
+    }
+
+    @media (max-width: 768px) {
+      html, body {
+        font-size: 14px;
+      }
+      pre.banner {
+        font-size: 8px;
+      }
+      #terminal {
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="matrix-bg" id="matrixBg"></div>
   <div id="terminal"></div>
   <script>
     const terminal = document.getElementById('terminal');
     const promptText = 'v1nd1c7@portfolio:~$';
+    let commandHistory = [];
+    let historyIndex = -1;
 
     const data = {
-      ls: `Available commands:\n whoami - About Me\n skills - Skills\n hobbies - Hobbies\n philosophy - philosophy of mine\n certs - Certifications\n contact - Contact Info\n projects - Projects\n future - Future Timeline\n clear - Clear terminal`,
-      whoami: `Nikola Perić v1nd1c7\nBased in Kragujevac, Serbia\nCybersecurity Specialist, Red Teamer & Ethical Hacker\nIndustrial Robotics Programmer, Embedded Systems Enthusiast & Pen Tester\nRadio Amateur & Lockpicking Hobbyist\nCaptain at xploitra CTF team\nAnime "freak"\nPolymath: hardware, software, wetware, psychology, philosophy, chess, Go game, longboarding, soldering, welding`,
-      skills: `Skills:\n- Offensive Security & Ethical Hacking\n- Red Teaming\n- Blue Teaming(begginer level)\n- Robotics Programming:\n- Panasonic (DTPS)\n- Fanuc (RoboGuide)\n- Linux (various distros), Bash, Python scripting\n- Networking, Penetration Testing\n- Lockpicking & Embedded Hardware Exploits`,
-      hobbies: `Hobbies:\n- Lockpicking & Security Research\n- Anime & Manga (Ghost in the Shell, Serial Experiments Lain, etc.)\n- Music (blues, techno, acid, jazz)\n- Robotics & Flipper Zero tinkering, HackRF One, NFC & RFID security`,
-      philosophy: `Understand the system, outsmart the threat, and act with silent precision `,
-      certs: `Certifications:\n- Google Cybersecurity Professional Certificate\n- HTB Certified Penetration Testing Specialist (CPTS) (in progress)\n- Cyberwarfare Certified Red Team Analyst (CRTA) (finished, taking the exam soon)\n- Various TryHackMe certs`,
-      projects:`Projects:\n- Building the first Hackerspace in Kragujevac\n- Hosted a Hackerspace at this year's BalcCon (Balkan Computer Congress) about lock picking security with workshops and tournaments\n- Installed and configured Kali NetHunter on a OnePlus 7.
- `,
-      future: `Future Timeline:\n- Obtain CPTS certification\n- Obtain a Red Teaming certification\n- Obtain the OSCP certification\n- Present on RF, RFID, and NFC security at BalcCon 2k26\n- Update Github profile with programming scripts\n- Make a Pi Hole at home to block adds\n- Planning a decentralized Meshtastic mesh deployment across Kragujevac\n- Build a better site than this one :)`,
-      contact: `Contact Info:\n- TryHackMe: https://tryhackme.com/p/v1nd1c7\n- LinkedIn: https://www.linkedin.com/in/npcybersec\n- X (Twitter): https://x.com/_kvantni_\n- Mail: v1nd1c7@proton.me`
+      ls: `Available commands:
+ whoami       - About Me
+ skills       - Technical Skills
+ hobbies      - Hobbies & Interests
+ philosophy   - Personal Philosophy
+ certs        - Certifications & Progress
+ contact      - Contact Information
+ projects     - Current Projects
+ future       - Future Timeline & Goals
+ clear        - Clear terminal
+ help         - Show this list`,
+      
+      whoami: `╔════════════════════════════════════════════════════════════╗
+║  Nikola Perić | v1nd1c7                                    ║
+║  Location: Kragujevac, Serbia                              ║
+╚════════════════════════════════════════════════════════════╝
+
+→ Cybersecurity Specialist & Red Teamer
+→ Ethical Hacker & Penetration Tester
+→ Behavioral Profiling & Human Intelligence Analyst
+→ Industrial Robotics Programmer
+→ Embedded Systems & Hardware Security Researcher
+→ Radio Amateur & Physical Security Specialist
+→ Captain @ xploitra CTF Team
+
+[BEHAVIORAL PROFILING SPECIALIZATION]
+• Tactical behavioral analysis & profiling
+• Micro-expression detection & interpretation
+• Nonverbal communication analysis
+• Social engineering defense & attack vectors
+• Human intelligence gathering (HUMINT)
+• Interrogation resistance techniques
+
+Polymath interests: Hardware | Software | Wetware | Psychology
+Philosophy | Chess | Go | Longboarding | Electronics | Anime`,
+
+      skills: `╔════════════════════════════════════════════════════════════╗
+║  TECHNICAL SKILLS MATRIX                                   ║
+╚════════════════════════════════════════════════════════════╝
+
+[OFFENSIVE SECURITY]
+├─ Red Teaming & Adversary Simulation
+├─ Penetration Testing (Web, Network, Wireless)
+├─ Exploit Development & Vulnerability Research
+├─ Social Engineering & OSINT
+└─ Blue Team Operations (Beginner Level)
+
+[BEHAVIORAL PROFILING & HUMINT]
+├─ Tactical Behavioral Analysis
+├─ Micro-Expression Recognition (FACS)
+├─ Statement Analysis & Deception Detection
+├─ Nonverbal Communication Patterns
+├─ Elicitation Techniques
+└─ Psychological Profiling
+
+[ROBOTICS & AUTOMATION]
+├─ Panasonic (DTPS)
+├─ Fanuc (RoboGuide)
+└─ Industrial PLC Programming
+
+[SYSTEMS & PROGRAMMING]
+├─ Linux (Kali, Parrot, Arch, Ubuntu)
+├─ Bash Scripting & Python
+├─ Network Protocol Analysis
+└─ Reverse Engineering Basics
+
+[HARDWARE & RF SECURITY]
+├─ Lockpicking & Physical Security
+├─ Embedded Systems Exploitation
+├─ Flipper Zero & HackRF One
+├─ NFC/RFID Security Testing
+└─ Software Defined Radio (SDR)`,
+
+      hobbies: `╔════════════════════════════════════════════════════════════╗
+║  INTERESTS & HOBBIES                                       ║
+╚════════════════════════════════════════════════════════════╝
+
+[SECURITY RESEARCH]
+→ Lockpicking & Physical Penetration Testing
+→ Hardware Hacking & Embedded Systems
+→ RF Security (NFC, RFID, Bluetooth, Wi-Fi)
+→ Radio Amateur Operations (HAM Radio)
+
+[TECHNOLOGY & TINKERING]
+→ Flipper Zero customization & development
+→ HackRF One SDR experiments
+→ Electronics: Soldering, Circuit Design
+→ Robotics & Automation Projects
+
+[CULTURE & PHILOSOPHY]
+→ Anime & Manga Enthusiast
+  (Ghost in the Shell, Serial Experiments Lain, 
+   Psycho-Pass, Ergo Proxy, Texhnolyze)
+→ Cyberpunk Philosophy & Transhumanism
+→ Strategic Games: Chess, Go
+
+[MUSIC]
+→ Blues, Techno, Acid, Jazz
+→ Electronic & Experimental
+
+[PHYSICAL]
+→ Longboarding
+→ Urban Exploration`,
+
+      philosophy: `╔════════════════════════════════════════════════════════════╗
+║  PHILOSOPHY                                                ║
+╚════════════════════════════════════════════════════════════╝
+
+   "Understand the system,
+    Outsmart the threat,
+    Act with silent precision."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The best defense is understanding the offense.
+The best offense is invisible until it strikes.
+
+Knowledge without action is potential wasted.
+Action without knowledge is chaos unleashed.
+
+Security is not a product, it's a mindset.`,
+
+      certs: `╔════════════════════════════════════════════════════════════╗
+║  CERTIFICATIONS & TRAINING                                 ║
+╚════════════════════════════════════════════════════════════╝
+
+[COMPLETED]
+✓ ISO/IEC 27001:2022 Lead Auditor (Mastermind)
+✓ Google Cybersecurity Professional Certificate
+✓ Cyberwarfare CRTA (Exam Pending)
+✓ Various TryHackMe Learning Paths
+
+[IN PROGRESS]
+⟳ HTB Certified Penetration Testing Specialist (CPTS)
+
+[PLANNED 2026]
+□ Offensive Security Certified Professional (OSCP)
+□ Advanced Red Team Operations Certification
+□ Behavioral Analysis & Profiling Course`,
+
+      projects: `╔════════════════════════════════════════════════════════════╗
+║  CURRENT PROJECTS                                          ║
+╚════════════════════════════════════════════════════════════╝
+
+[COMMUNITY BUILDING]
+→ Founding Kragujevac's First Hackerspace
+  Building a local community for security researchers,
+  makers, and tech enthusiasts
+
+[BALCCON WORKSHOP]
+→ Hosted Lockpicking Security Workshop @ BalcCon 2k25
+  • Physical security demonstrations
+  • Lock bypass techniques
+  • Security tournaments & competitions
+
+[MOBILE SECURITY]
+→ Kali NetHunter on OnePlus 7
+  Custom Android penetration testing platform
+  Wireless attack capabilities on mobile device
+
+[HARDWARE PROJECTS]
+→ Custom Flipper Zero firmwares
+→ RF signal analysis & replay attacks
+→ NFC/RFID security research`,
+
+      future: `╔════════════════════════════════════════════════════════════╗
+║  FUTURE TIMELINE & GOALS                                   ║
+╚════════════════════════════════════════════════════════════╝
+
+[2026 Q1-Q2]
+☐ Complete CPTS Certification
+☐ Pass CRTA Certification Exam
+☐ Launch Kragujevac Hackerspace
+☐ Implement Home Pi-Hole Ad-Blocking System
+
+[2026 Q3-Q4]
+☐ Present at BalcCon 2k26
+  Topic: "RF, RFID & NFC Security in the Wild"
+☐ Obtain Red Team Operations Certification
+☐ Begin OSCP Preparation & Certification
+☐ Deploy Meshtastic Mesh Network Across Kragujevac
+  (Decentralized, resilient communication)
+
+[ONGOING]
+☐ Update GitHub with Security Tools & Scripts
+☐ Contribute to Open Source Security Projects
+☐ Write Technical Blog Posts & Tutorials
+☐ Develop Advanced Behavioral Profiling Skills
+☐ Build Enhanced Portfolio Website (you're looking at v1!)
+
+[LONG-TERM VISION]
+→ Become recognized Red Team Operator
+→ Speak at major security conferences (DEF CON, Black Hat)
+→ Develop proprietary security tools
+→ Train next generation of security researchers`,
+
+      contact: `╔════════════════════════════════════════════════════════════╗
+║  CONTACT INFORMATION                                       ║
+╚════════════════════════════════════════════════════════════╝
+
+📧 Email:      v1nd1c7@proton.me
+
+🔗 TryHackMe:  https://tryhackme.com/p/v1nd1c7
+🔗 LinkedIn:   https://www.linkedin.com/in/npcybersec
+🔗 X (Twitter): https://x.com/_kvantni_
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PGP: Available upon request
+Signal: Available upon request
+
+For security research collaboration or inquiries,
+encrypted communication preferred.`,
+
+      help: `Available commands:
+ whoami       - About Me
+ skills       - Technical Skills
+ hobbies      - Hobbies & Interests
+ philosophy   - Personal Philosophy
+ certs        - Certifications & Progress
+ contact      - Contact Information
+ projects     - Current Projects
+ future       - Future Timeline & Goals
+ clear        - Clear terminal
+ help         - Show this list`
     };
 
-    function appendLine(text = '') {
+    // Matrix background effect
+    function createMatrixRain() {
+      const matrixBg = document.getElementById('matrixBg');
+      const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+      
+      for (let i = 0; i < 50; i++) {
+        const char = document.createElement('div');
+        char.classList.add('matrix-char');
+        char.textContent = chars[Math.floor(Math.random() * chars.length)];
+        char.style.left = Math.random() * 100 + '%';
+        char.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        char.style.animationDelay = Math.random() * 5 + 's';
+        matrixBg.appendChild(char);
+      }
+    }
+
+    function appendLine(text = '', className = '') {
       const line = document.createElement('div');
+      line.className = `output-line ${className}`;
       line.innerHTML = text;
       terminal.appendChild(line);
       terminal.scrollTop = terminal.scrollHeight;
@@ -79,7 +477,7 @@
 
     function appendPre(text, isBanner = false) {
       const pre = document.createElement('pre');
-      pre.className = isBanner ? 'banner' : '';
+      pre.className = isBanner ? 'banner' : 'output-line';
       pre.innerHTML = text.replace(/(https?:\/\/[^\s]+)/g, (match) => {
         return `<a href="${match}" target="_blank" rel="noopener noreferrer">${match}</a>`;
       });
@@ -99,8 +497,37 @@
       line.append(promptSpan, input);
       terminal.appendChild(line);
       input.focus();
+      
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') handleInput(e);
+        if (e.key === 'Enter') {
+          handleInput(e);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            input.value = commandHistory[commandHistory.length - 1 - historyIndex];
+          }
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (historyIndex > 0) {
+            historyIndex--;
+            input.value = commandHistory[commandHistory.length - 1 - historyIndex];
+          } else if (historyIndex === 0) {
+            historyIndex = -1;
+            input.value = '';
+          }
+        } else if (e.key === 'Tab') {
+          e.preventDefault();
+          const partial = input.value.toLowerCase();
+          const matches = Object.keys(data).filter(cmd => cmd.startsWith(partial));
+          if (matches.length === 1) {
+            input.value = matches[0];
+          } else if (matches.length > 1) {
+            appendLine(`\nPossible commands: ${matches.join(', ')}`);
+            newPrompt();
+            input.value = partial;
+          }
+        }
       });
     }
 
@@ -108,38 +535,62 @@
       const input = e.target;
       const cmd = input.value.trim().toLowerCase();
       input.disabled = true;
+      
+      if (cmd) {
+        commandHistory.push(cmd);
+        historyIndex = -1;
+      }
+
       if (cmd === 'clear') {
         terminal.innerHTML = '';
         showBanner();
-        appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'ls' to see available commands.");
+        appendLine("System initialized. Type 'ls' or 'help' to see available commands.\n", 'glow-text');
         newPrompt();
         return;
       }
+      
       if (data.hasOwnProperty(cmd)) {
         appendPre(data[cmd]);
+      } else if (cmd === '') {
+        // Do nothing for empty command
       } else {
-        appendLine(`Command not found: ${cmd}. Type 'ls' for list of commands.`);
+        appendLine(`bash: ${cmd}: command not found`);
+        appendLine(`Type 'ls' or 'help' for available commands.`);
       }
+      
       newPrompt();
     }
 
     function showBanner() {
       const banner = `
-        d888               888 d888          8888888888 
-       d8888               888d8888                 d88P 
-         888               888  888               d88P  
-888  888 888  88888b.  .d88888  888   .d8888b    d88P   
-888  888 888  888 "88bd88" 888  888  d88P"    88888888  
-Y88  88P 888  888  888888  888  888  888       d88P     
- Y8bd8P  888  888  888Y88b 888  888  Y88b.    d88P      
-  Y88P 8888888888  888 "Y888888888888 "Y8888Pd88P       
+    ██╗   ██╗ ██╗███╗   ██╗██████╗  ██╗ ██████╗████████╗
+    ██║   ██║███║████╗  ██║██╔══██╗███║██╔════╝╚══██╔══╝
+    ██║   ██║╚██║██╔██╗ ██║██║  ██║╚██║██║        ██║   
+    ╚██╗ ██╔╝ ██║██║╚██╗██║██║  ██║ ██║██║        ██║   
+     ╚████╔╝  ██║██║ ╚████║██████╔╝ ██║╚██████╗   ██║   
+      ╚═══╝   ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═╝ ╚═════╝   ╚═╝   
+                                                         
+    ╔════════════════════════════════════════════════════╗
+    ║  CYBERSECURITY SPECIALIST | RED TEAMER | PROFILER  ║
+    ║  Nikola Perić | Kragujevac, Serbia                 ║
+    ╚════════════════════════════════════════════════════╝
 `;
       appendPre(banner, true);
     }
 
+    // Initialize
+    createMatrixRain();
     showBanner();
-    appendLine("Welcome to v1nd1c7's Terminal Portfolio. Type 'ls' to see available commands.");
+    appendLine("System initialized. Type 'ls' or 'help' to see available commands.\n", 'glow-text');
     newPrompt();
+
+    // Keep focus on terminal
+    terminal.addEventListener('click', () => {
+      const inputs = terminal.querySelectorAll('.cmdline');
+      if (inputs.length > 0) {
+        inputs[inputs.length - 1].focus();
+      }
+    });
   </script>
 </body>
 </html>
